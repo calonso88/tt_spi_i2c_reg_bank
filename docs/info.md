@@ -69,7 +69,7 @@ spi_cs(0); spi.write(b'\x00'); spi.read(1); spi_cs(1)
 
 The result should be 0xF8 or whatever you wrote to address[0].
 
-TODO: I2C.
+TODO: I2C documentation.
 
 ## External hardware
 
