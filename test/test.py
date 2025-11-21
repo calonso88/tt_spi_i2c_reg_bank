@@ -30,13 +30,13 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 10)
 
     # Select i2c peripheral
-    dut.ui_in[7].value = 1
+    dut.ui_in.value = 1 << 7
 
     # Wait for some time
     await ClockCycles(dut.clk, 10)
 
     # I2C Master component
-    i2c_master = I2cMaster(dut.i2c_sda_oe, dut.i2c_sda_i, dut.i2c_scl_i, dut.i2c_scl_i, 400)
+    i2c_master = I2cMaster(dut.i2c_sda, dut.uio_in[1], dut.uio_in[2], dut.uio_in[2], 400)
 
     test_data = b'\xaa\xbb\xcc\xdd'
     await i2c_master.write(0x70, b'\x00' + test_data)
