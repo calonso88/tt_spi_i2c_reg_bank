@@ -47,8 +47,8 @@ module tb ();
   );
 
   // Tri-state logic for i2c
-  wire i2c_sda   = uio_oe[1] ? uio_out[1] : 1'b1;
-  wire i2c_sda_i = uio_in[1];
-  wire i2c_scl   = uio_in[2];
+  wire i2c_sda   = ~uio_oe[1] ? uio_out[1] : 1'b1;
+  wire i2c_sda_i =  uio_in[1];
+  wire i2c_scl   =  uio_in[2];
 
 endmodule
