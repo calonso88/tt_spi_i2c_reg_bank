@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Your Name
+ * Copyright (c) 2025 Caio Alonso da Costa
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -57,6 +57,7 @@ module tt_um_calonso88_spi_i2c_reg_bank (
   // Output ports (drive 7 segments display)
   assign uo_out[7:0] = d7seg;
 
+
   // Bi direction IO [0] unused - set always as inputs
   assign uio_oe[0] = 1'b0;
   // Bi direction IO [1] - Control of i2c SDA
@@ -96,7 +97,7 @@ module tt_um_calonso88_spi_i2c_reg_bank (
   assign uio_out[7:4] = 4'b0000;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ui_in[6:5], uio_in[7], uio_in[3], uio_in[0], 1'b0};
+    wire _unused = &{ui_in[6:5], uio_in[7], uio_in[3], uio_in[0], 1'b0};
 
   // Instantiate top
   sunrise_digital_top sunrise_digital_top_i (

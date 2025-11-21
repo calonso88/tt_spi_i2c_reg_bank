@@ -21,19 +21,22 @@ async def test_project(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
+    # Pull up i2c SDA and SCL
+    dut.uio_in.value = (1 << 1) + (1 << 2)
+
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
 
     dut._log.info("Test project behavior")
 
     # Wait for some time
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 100)
 
     # Select i2c peripheral
     dut.ui_in.value = 1 << 7
 
     # Wait for some time
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 100)
 
     # I2C Master component
     i2c_master = I2cMaster(dut.i2c_sda, dut.i2c_sda_i, dut.i2c_scl, dut.i2c_scl, 400)
