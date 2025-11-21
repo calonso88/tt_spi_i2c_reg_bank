@@ -46,4 +46,7 @@ module tb ();
       .rst_n  (rst_n)     // not reset
   );
 
+  // Tri-state logic for i2c
+  wire i2c_sda = uio_oe[1] ? uio_out[1] : 1'b1;
+
 endmodule

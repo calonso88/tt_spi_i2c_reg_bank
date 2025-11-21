@@ -5,6 +5,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
+from cocotbext.i2c import I2cMaster
 
 @cocotb.test()
 async def test_project(dut):
@@ -25,16 +26,31 @@ async def test_project(dut):
 
     dut._log.info("Test project behavior")
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+    # Wait for some time
+    await ClockCycles(dut.clk, 10)
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+    # Select i2c peripheral
+    dut.ui_in[7].value = 1
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    # assert dut.uo_out.value == 50
+    # Wait for some time
+    await ClockCycles(dut.clk, 10)
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    # I2C Master component
+    i2c_master = I2cMaster(dut.i2c_sda_oe, dut.i2c_sda_i, dut.i2c_scl_i, dut.i2c_scl_i, 400)
+
+    test_data = b'\xaa\xbb\xcc\xdd'
+    await i2c_master.write(0x70, b'\x00' + test_data)
+    await i2c_master.send_stop()
+
+    # Wait for some time
+    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 10)
+
+    await i2c_master.write(0x70, b'\x00')
+    data = await i2c_master.read(0x70, 4)
+    await i2c_master.send_stop()
+
+    assert test_data == data
+
+    # Wait for some time
+    await ClockCycles(dut.clk, 10)
