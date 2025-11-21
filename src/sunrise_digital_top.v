@@ -26,7 +26,9 @@ module sunrise_digital_top (
     input  wire  i2c_scl_i,      // i2c serial clock input
     input  wire  i2c_sda_i,      // i2c serial data input
     output wire  i2c_sda_o,      // i2c serial data output
-    output wire  i2c_sda_oe      // i2c serial data output enable (tri-state control), 0 = HiZ, 1 = drive i2c_data_o
+    output wire  i2c_sda_oe,     // i2c serial data output enable (tri-state control), 0 = HiZ, 1 = drive i2c_data_o
+
+    output wire [7:0] d7seg_o    // 7 segments display
 );
 
   // Number of stages in each synchronizer
@@ -43,6 +45,7 @@ module sunrise_digital_top (
   // Config Regs and Status Regs
   wire [NUM_CFG*REG_WIDTH-1:0] rw_regs;
   wire [NUM_STATUS*REG_WIDTH-1:0] ro_regs;
+  wire [7:0] d7seg;
 
   // Sync'ed
   wire protrocol_sel_sync;
@@ -100,5 +103,9 @@ module sunrise_digital_top (
     .rw_regs(rw_regs),
     .ro_regs(ro_regs)
   );
+
+  // 7 segments display address 0
+  assign d7seg = rw_regs[7:0];
+  assign d7seg_o = d7seg;
 
 endmodule
