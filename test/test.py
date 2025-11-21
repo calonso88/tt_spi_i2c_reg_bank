@@ -36,7 +36,7 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 10)
 
     # I2C Master component
-    i2c_master = I2cMaster(dut.i2c_sda, dut.uio_in[1], dut.uio_in[2], dut.uio_in[2], 400)
+    i2c_master = I2cMaster(dut.i2c_sda, dut.i2c_sda_i, dut.i2c_scl, dut.i2c_scl, 400)
 
     test_data = b'\xaa\xbb\xcc\xdd'
     await i2c_master.write(0x70, b'\x00' + test_data)
