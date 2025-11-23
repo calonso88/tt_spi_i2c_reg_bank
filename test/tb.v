@@ -18,7 +18,9 @@ module tb ();
   reg rst_n;
   reg ena;
   reg [7:0] ui_in;
-  reg [7:0] uio_in;
+  reg [7:0] uio_in_ext;
+  wire [7:0] uio_in;
+
   wire [7:0] uo_out;
   wire [7:0] uio_out;
   wire [7:0] uio_oe;
@@ -49,8 +51,10 @@ module tb ();
   wire i2c_sda_i, i2c_scl;
 
   // Tri-state logic for i2c
-  wire i2c_sda     = ~uio_oe[1] ? uio_out[1] : 1'b1;
+  wire i2c_sda     = uio_oe[1] ? uio_out[1] : 1'b1;
   assign uio_in[1] = i2c_sda_i;
   assign uio_in[2] = i2c_scl;
 
+  assign uio_in[0] = uio_in_ext[0];
+  assign uio_in[7:3] = uio_in_ext[7:3];
 endmodule

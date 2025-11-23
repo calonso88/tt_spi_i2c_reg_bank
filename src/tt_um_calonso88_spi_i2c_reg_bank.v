@@ -66,6 +66,7 @@ module tt_um_calonso88_spi_i2c_reg_bank (
   assign uio_oe[2] = 1'b0;
   // Bi direction IO [3] - (miso) is controlled by spi_cs
   assign uio_oe[3] = spi_cs_n ? 1'b0 : 1'b1;
+  //assign uio_oe[3] = 1'b1;
   // Bi direction IO OE [6:4] (cs_n, sclk, mosi) always as inputs
   assign uio_oe[6:4] = 3'b000;
   // Bi direction IO [7] unused - set always as inputs

@@ -41,7 +41,7 @@ module i2c_peripheral #(
   logic bus_start, bus_stop;
 
   assign sda_o  = 1'b0;
-  assign sda_oe = ~pull_sda;
+  assign sda_oe = pull_sda;
 
   // Detect edges using a glitch/noise filter
   // Require three consecutive identical samples to identify a proper edge:

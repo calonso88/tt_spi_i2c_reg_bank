@@ -18,13 +18,18 @@ async def test_project(dut):
     # Reset
     dut._log.info("Reset")
     dut.ena.value = 1
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
+    # Pull down inputs
+    dut.ui_in = 0
+    # Pull up all bidirection inputs
+    dut.uio_in_ext.value = 255
+    # Pull up SCL and SDA
+    dut.i2c_scl.value = 1
+    dut.i2c_sda_i.value = 1
+    # Hold in reset
     dut.rst_n.value = 0
-    # Pull up i2c SDA and SCL
-    dut.uio_in.value = (1 << 1) + (1 << 2)
 
     await ClockCycles(dut.clk, 10)
+    # Relase reset
     dut.rst_n.value = 1
 
     dut._log.info("Test project behavior")
@@ -41,19 +46,25 @@ async def test_project(dut):
     # I2C Master component
     i2c_master = I2cMaster(dut.i2c_sda, dut.i2c_sda_i, dut.i2c_scl, dut.i2c_scl, 400)
 
-    test_data = b'\xaa\xbb\xcc\xdd'
+    # Test data pattern
+    test_data = b'\xca\x10\xde\xad'
+    # Write Address 0 + 4 bytes for test data pattern
     await i2c_master.write(0x70, b'\x00' + test_data)
+    # Sendo stop bit
     await i2c_master.send_stop()
 
     # Wait for some time
-    await ClockCycles(dut.clk, 10)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
 
+    # Write Address 0
     await i2c_master.write(0x70, b'\x00')
+    # Read 4 bytes from Address 0
     data = await i2c_master.read(0x70, 4)
+    # Sendo stop bit
     await i2c_master.send_stop()
 
+    # Assert data read is same as written
     assert test_data == data
 
     # Wait for some time
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 100)
