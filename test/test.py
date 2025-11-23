@@ -19,7 +19,7 @@ async def test_project(dut):
     dut._log.info("Reset")
     dut.ena.value = 1
     # Pull down inputs
-    dut.ui_in = 0
+    dut.ui_in.value = 0
     # Pull up all bidirection inputs
     dut.uio_in_ext.value = 255
     # Pull up SCL and SDA
@@ -37,8 +37,9 @@ async def test_project(dut):
     # Wait for some time
     await ClockCycles(dut.clk, 100)
 
-    # Select i2c peripheral
-    dut.ui_in.value = 1 << 7
+    # Select i2c peripheral and set differen address modifiers
+    dut.ui_in.value = (1 << 7) + (1 << 4) + (1 << 3) + (0 << 2)
+
 
     # Wait for some time
     await ClockCycles(dut.clk, 100)
@@ -49,7 +50,7 @@ async def test_project(dut):
     # Test data pattern
     test_data = b'\xca\x10\xde\xad'
     # Write Address 0 + 4 bytes for test data pattern
-    await i2c_master.write(0x70, b'\x00' + test_data)
+    await i2c_master.write(0x76, b'\x00' + test_data)
     # Sendo stop bit
     await i2c_master.send_stop()
 
@@ -57,9 +58,9 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 50)
 
     # Write Address 0
-    await i2c_master.write(0x70, b'\x00')
+    await i2c_master.write(0x76, b'\x00')
     # Read 4 bytes from Address 0
-    data = await i2c_master.read(0x70, 4)
+    data = await i2c_master.read(0x76, 4)
     # Sendo stop bit
     await i2c_master.send_stop()
 

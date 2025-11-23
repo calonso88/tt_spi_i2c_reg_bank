@@ -13,6 +13,10 @@ module i2c_peripheral #(
     input  logic clk,
     input  logic rst_n,
     input  logic ena,
+    // i2c address modifier
+    input  logic i2c_addr0,
+    input  logic i2c_addr1,
+    input  logic i2c_addr2,
     // i2c interface
     output logic sda_o,
     output logic sda_oe,
@@ -84,6 +88,10 @@ module i2c_peripheral #(
   parameter read_bytes_f = 4'd8;
   parameter read_ack = 4'd9;
 
+  // Address flexibility to use 3 more bits
+  logic [6:0] addr_flex;
+  assign addr_flex = SLAVE_ADDR | {4'b0, i2c_addr2, i2c_addr1, i2c_addr0};
+
   // This FSM tracks the bus transaction and executes the application R/W commands
   logic [7:0] dbyte;
 
@@ -140,7 +148,7 @@ module i2c_peripheral #(
                counter <= 4'b0;
                if (!addr_ok) begin
                  // We haven't seen the slave address yet, so this must be it
-                 if (dbyte[7:1] != SLAVE_ADDR)
+                 if (dbyte[7:1] != addr_flex)
                    state = reset; // not our message
                  else begin
                    // This is our I2C address
@@ -162,7 +170,7 @@ module i2c_peripheral #(
                        state = read_bytes_pre;
                      end // dbyte[0] (read/write)
                    end // falling clock in slave address ack state
-                 end // SLAVE_ADDR check
+                 end // addr_flex check
                end else begin // addr_ok
                  // We have seen the slave address previously,
                  // so this must be the sub-address byte.

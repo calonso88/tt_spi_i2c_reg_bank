@@ -54,6 +54,9 @@ module sunrise_digital_top (
   wire spi_cs_n_sync;
   wire spi_clk_sync;
   wire spi_mosi_sync;
+  wire i2c_addr0_sync;
+  wire i2c_addr1_sync;
+  wire i2c_addr2_sync;
 
   // Synchronizers for protocol selector
   synchronizer #(.STAGES(SYNC_STAGES), .WIDTH(SYNC_WIDTH))
@@ -69,6 +72,13 @@ module sunrise_digital_top (
   sync_input_spi_clk  (.rstb(rst_n), .clk(clk), .ena(ena), .data_in(spi_clk_i),  .data_out(spi_clk_sync));
   synchronizer #(.STAGES(SYNC_STAGES), .WIDTH(SYNC_WIDTH))
   sync_input_spi_mosi (.rstb(rst_n), .clk(clk), .ena(ena), .data_in(spi_mosi_i), .data_out(spi_mosi_sync));
+  // Synchronizers for i2c Addrs
+  synchronizer #(.STAGES(SYNC_STAGES), .WIDTH(SYNC_WIDTH))
+  sync_input_i2c_addr0 (.rstb(rst_n), .clk(clk), .ena(ena), .data_in(i2c_addr0_i), .data_out(i2c_addr0_sync));
+  synchronizer #(.STAGES(SYNC_STAGES), .WIDTH(SYNC_WIDTH))
+  sync_input_i2c_addr1 (.rstb(rst_n), .clk(clk), .ena(ena), .data_in(i2c_addr1_i), .data_out(i2c_addr1_sync));
+  synchronizer #(.STAGES(SYNC_STAGES), .WIDTH(SYNC_WIDTH))
+  sync_input_i2c_addr2 (.rstb(rst_n), .clk(clk), .ena(ena), .data_in(i2c_addr2_i), .data_out(i2c_addr2_sync));
 
   // Assign status
   assign ro_regs[7:0]   = 8'hCA;
@@ -99,6 +109,9 @@ module sunrise_digital_top (
     .i2c_sda_oe(i2c_sda_oe),
     .i2c_sda_i(i2c_sda_i),
     .i2c_scl(i2c_scl_i),
+    .i2c_addr0(i2c_addr0_sync),
+    .i2c_addr1(i2c_addr1_sync),
+    .i2c_addr2(i2c_addr2_sync),
     .sel(protrocol_sel_sync),
     .rw_regs(rw_regs),
     .ro_regs(ro_regs)

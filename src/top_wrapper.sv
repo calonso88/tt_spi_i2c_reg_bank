@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-module top_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, parameter int REG_WIDTH = 8) (rstb, clk, ena, mode, spi_cs_n, spi_clk, spi_mosi, spi_miso, spi_miso_oe, i2c_sda_o, i2c_sda_oe, i2c_sda_i, i2c_scl, sel, rw_regs, ro_regs);
+module top_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, parameter int REG_WIDTH = 8) (rstb, clk, ena, mode, spi_cs_n, spi_clk, spi_mosi, spi_miso, spi_miso_oe, i2c_sda_o, i2c_sda_oe, i2c_sda_i, i2c_scl,, i2c_addr0, i2c_addr1, i2c_addr2, sel, rw_regs, ro_regs);
 
   input  logic rstb;
   input  logic clk;
@@ -20,6 +20,9 @@ module top_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
   output logic i2c_sda_oe;
   input  logic i2c_sda_i;
   input  logic i2c_scl;
+  input  logic i2c_addr0;
+  input  logic i2c_addr1;
+  input  logic i2c_addr2;
   // Peripheral selector
   input  logic sel;
   // RW and RO registers
@@ -82,6 +85,9 @@ module top_wrapper #(parameter int NUM_CFG = 8, parameter int NUM_STATUS = 8, pa
     .clk(clk),
     .rst_n(rstb),
     .ena(ena),
+    .i2c_addr0(i2c_addr0),
+    .i2c_addr1(i2c_addr1),
+    .i2c_addr2(i2c_addr2),
     .sda_o(i2c_sda_o),
     .sda_oe(i2c_sda_oe),
     .sda_i(i2c_sda_i),
