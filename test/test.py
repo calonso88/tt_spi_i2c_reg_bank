@@ -22,23 +22,23 @@ def spi_clk_invert(value):
 async def spi_write_cpha0 (dut, address, data):
 
   dut.spi_cs_n_i.value = 1 # PULL CS high, if it wasn't already
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
 
   # Pull CS low + Write command bit - bit 7 - MSBIT in first byte
   dut.spi_cs_n_i.value = 0
   dut.spi_mosi_i.value = 1
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
   dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
 
   iterator = 0
   while iterator < 3:
     # Don't care - bit 6, bit 5 and bit 4
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
     dut.spi_mosi_i.value = 0
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     iterator += 1
 
   iterator = 3
@@ -50,9 +50,9 @@ async def spi_write_cpha0 (dut, address, data):
       dut.spi_mosi_i.value = 0
     else:
       dut.spi_mosi_i.value = 1
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     iterator -= 1
 
   iterator = 7
@@ -64,38 +64,38 @@ async def spi_write_cpha0 (dut, address, data):
       dut.spi_mosi_i.value = 0
     else:
       dut.spi_mosi_i.value = 1
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     iterator -= 1
 
   dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
 
   dut.spi_cs_n_i.value = 1 # PULL CS high
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
 
 
 async def spi_read_cpha0 (dut, address):
 
   dut.spi_cs_n_i.value = 1 # PULL CS high, if it wasn't already
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
 
   # Pull CS low + Read command bit - bit 7 - MSBIT in first byte
   dut.spi_cs_n_i.value = 0 # PULL CS low to start transmission
   dut.spi_mosi_i.value = 0
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
   dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
 
   iterator = 0
   while iterator < 3:
     # Don't care - bit 6, bit 5 and bit 4
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
     dut.spi_mosi_i.value = 0
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     iterator += 1
 
   iterator = 3
@@ -107,9 +107,9 @@ async def spi_read_cpha0 (dut, address):
       dut.spi_mosi_i.value = 0
     else:
       dut.spi_mosi_i.value = 1
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     iterator -= 1
 
   miso_byte = 0
@@ -126,18 +126,18 @@ async def spi_read_cpha0 (dut, address):
       dut.spi_mosi_i.value = 0
     else:
       dut.spi_mosi_i.value = 1
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     miso_bit = int(dut.spi_miso_o.value)
     miso_byte = miso_byte | (miso_bit << iterator)
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     iterator -= 1
 
   dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
 
   dut.spi_cs_n_i.value = 1 # PULL CS high
-  await ClockCycles(dut.clk, 10)
+  await ClockCycles(dut.clk, 50)
 
   return miso_byte
 
@@ -167,7 +167,7 @@ async def test_project(dut):
     # Hold in reset
     dut.rst_n.value = 0
 
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
     # Relase reset
     dut.rst_n.value = 1
 
@@ -219,14 +219,14 @@ async def test_project(dut):
 
     # Pull CS high
     dut.spi_cs_n_i.value = 1 # DRIVE CS HIGH
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
 
     # CPOL = 0, SPI_CLK low in idle
     dut.spi_clk_i.value = 0
 
     # Wait for some time
-    await ClockCycles(dut.clk, 10)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
+    await ClockCycles(dut.clk, 50)
 
     # ITERATIONS
     iterations = 0
@@ -292,8 +292,8 @@ async def test_project(dut):
         # Read status reg[7]
         s_reg7 = await spi_read_cpha0 (dut, 15)
 
-        await ClockCycles(dut.clk, 10)
-        await ClockCycles(dut.clk, 10)
+        await ClockCycles(dut.clk, 50)
+        await ClockCycles(dut.clk, 50)
 
         assert reg0 == data0
         assert reg1 == data1
@@ -316,5 +316,5 @@ async def test_project(dut):
 
 
     # Wait for some time
-    await ClockCycles(dut.clk, 10)
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 50)
+    await ClockCycles(dut.clk, 50)

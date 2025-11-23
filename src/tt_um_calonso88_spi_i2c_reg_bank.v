@@ -36,6 +36,7 @@ module tt_um_calonso88_spi_i2c_reg_bank (
   wire spi_cs_n;
   wire spi_clk;
   wire spi_miso;
+  wire spi_miso_oe;
   wire spi_mosi;
 
   // 7 segment display
@@ -64,8 +65,8 @@ module tt_um_calonso88_spi_i2c_reg_bank (
   assign uio_oe[1] = i2c_sda_oe;
   // Bi direction IO [2] - i2c SCL, always input
   assign uio_oe[2] = 1'b0;
-  // Bi direction IO [3] - (miso) is controlled by spi_cs
-  assign uio_oe[3] = spi_cs_n ? 1'b0 : 1'b1;
+  // Bi direction IO [3] - (miso) is controlled by miso_oe
+  assign uio_oe[3] = spi_miso_oe;
   //assign uio_oe[3] = 1'b1;
   // Bi direction IO OE [6:4] (cs_n, sclk, mosi) always as inputs
   assign uio_oe[6:4] = 3'b000;
@@ -98,7 +99,7 @@ module tt_um_calonso88_spi_i2c_reg_bank (
   assign uio_out[7:4] = 4'b0000;
 
   // List all unused inputs to prevent warnings
-    wire _unused = &{ui_in[6:5], uio_in[7], uio_in[3], uio_in[0], 1'b0};
+  wire _unused = &{ui_in[6:5], uio_in[7], uio_in[3], uio_in[0], 1'b0};
 
   // Instantiate top
   sunrise_digital_top sunrise_digital_top_i (
@@ -112,7 +113,7 @@ module tt_um_calonso88_spi_i2c_reg_bank (
     .spi_clk_i      (spi_clk),    // SPI clock
     .spi_mosi_i     (spi_mosi),   // SPI data line, manager output, peripheral input
     .spi_miso_o     (spi_miso),   // SPI data line, manager input, peripheral output
-    .spi_miso_oe    (),           // SPI data line, manager input, peripheral output enable output enable (tri-state control), 0 = HiZ, 1 = drive spi_miso
+    .spi_miso_oe    (spi_miso_oe),// SPI data line, manager input, peripheral output enable output enable (tri-state control), 0 = HiZ, 1 = drive spi_miso
 
     .i2c_addr0_i    (i2c_addr0),  // i2c address bit 0 input
     .i2c_addr1_i    (i2c_addr1),  // i2c address bit 1 input

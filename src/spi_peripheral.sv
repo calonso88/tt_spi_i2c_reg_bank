@@ -262,6 +262,6 @@ module spi_peripheral #(
   assign wdata = reg_data;
   assign we = reg_we;
   assign spi_miso = tx_buffer[REG_W-1];
-  assign spi_miso_oe = spi_cs_n;
+  assign spi_miso_oe = ~spi_cs_n;
 
 endmodule
