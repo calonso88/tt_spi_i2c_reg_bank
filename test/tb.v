@@ -64,6 +64,6 @@ module tb ();
   assign uio_in[5] = spi_clk_i;
   assign uio_in[6] = spi_mosi_i;
 
-  assign spi_miso_o = uio_oe[3] ? uio_out[3] : 1'b1;
+  assign spi_miso_o = uio_oe[3] ? uio_out[3] : 1'bz;
 
 endmodule
