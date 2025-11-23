@@ -121,4 +121,7 @@ module sunrise_digital_top (
   assign d7seg = rw_regs[7:0];
   assign d7seg_o = d7seg;
 
+  // Cleanup lint warning
+  wire _unused = &{rw_regs[63:8], 1'b0};
+
 endmodule
