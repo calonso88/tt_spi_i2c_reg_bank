@@ -49,6 +49,7 @@ module tb ();
   );
 
   wire i2c_sda_i, i2c_scl;
+  wire spi_cs_n_i, spi_clk_i, spi_mosi_i, spi_miso_o;
 
   // Tri-state logic for i2c
   wire i2c_sda     = uio_oe[1] ? uio_out[1] : 1'b1;
@@ -56,5 +57,13 @@ module tb ();
   assign uio_in[2] = i2c_scl;
 
   assign uio_in[0] = uio_in_ext[0];
-  assign uio_in[7:3] = uio_in_ext[7:3];
+  assign uio_in[3] = uio_in_ext[3];
+  assign uio_in[7] = uio_in_ext[7];
+
+  assign uio_in[4] = spi_cs_n_i;
+  assign uio_in[5] = spi_clk_i;
+  assign uio_in[6] = spi_mosi_i;
+
+  assign spi_miso_o = uio_out[3];
+
 endmodule
