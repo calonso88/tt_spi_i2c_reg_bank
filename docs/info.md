@@ -11,11 +11,54 @@ You can also include images in this folder and reference them in the markdown. E
 
 Register bank accessible throught two different serial interfaces: SPI and I2C. Use digital input to select prefered interface.
 
+Digital input ui_in[7] = 0 selects SPI and ui_in[7] = 1 selects I2C.
+
+## Block diagram
+```sh                
+                +----------------------------------------+
+                |                                        |
+                |   +-----------+        +-----------+   |
+SPI Pins <----> |   | SPI Slave |        | I2C Slave |   | <----> I2C Pins
+                |   | Interface |        | Interface |   |
+                |   +-----+-----+        +-----+-----+   |
+                |         ^                    ^         |
+                |         |                    |         |
+                |         |                    |         |
+                |         v                    v         |
+                |      +--+--------------------+--+      |
+                |      |        Bus Arbiter       |      |
+                |      +-------------+------------+      |
+                |                    ^                   |
+                |                    |  Internal         |
+                |                    |  Register         |
+                |                    |  Access Bus       |
+                |                    v                   |
+                |      +-------------+------------+      |
+                |      |       Register Bank      |      |
+                |      |                          |      |
+                |      |   +------------------+   |      |
+                |      |   |       REG0       |---|------|------> 7 segments display
+                |      |   +------------------+   |      |
+                |      |                          |      |
+                |      |   +------------------+   |      |
+                |      |   |       REG1       |   |      |
+                |      |   +------------------+   |      |
+                |      |            ...           |      |
+                |      |   +------------------+   |      |
+                |      |   |       REG14      |   |      |
+                |      |   +------------------+   |      |
+                |      |                          |      |
+                |      |   +------------------+   |      |
+                |      |   |       REG15      |   |      |
+                |      |   +------------------+   |      |
+                |      +--------------------------+      |
+                |                                        |
+                +----------------------------------------+
+```
+
 There are 8 read/write 8 bit registers and 8 read only 8 bit registers.
 
 Address 0 (first byte in read/write register space) drives the 7 segment display.
-
-Digital input ui_in[7] = 0 selects SPI and  ui_in[7] = 1 selects I2C.
 
 SPI peripheral design based on https://github.com/calonso88/tt07_alu_74181
 
@@ -28,16 +71,52 @@ This has reduced 4 flip flops in total and some combinatorial logic as well.
 Added logic to control driver for MISO. On previous submissions of this design, the MISO was always driven.
 Logic has been added to put MISO into high impedance when CS_N is driven high. Due to a 2-stage synchronizer, the MISO goes to high impedance after 2 clock cycles.
 
-
 I2C peripheral design based on https://github.com/sanojn/tt06_ttrpg_dice
 
 See that design's docs for information about the I2C peripheral.
 
 
+## Protocol specification
+
+### SPI Write
+<img width="2055" height="247" alt="image" src="https://github.com/user-attachments/assets/c2650474-59a1-4d32-8fa9-1cfcd324ecc4" />
+
+### SPI Read
+
+<img width="2038" height="230" alt="image" src="https://github.com/user-attachments/assets/136d1096-bd1e-441e-a077-004706ebffc6" />
+
+### I2C Frame
+
+<img width="2452" height="143" alt="image" src="https://github.com/user-attachments/assets/4ad063ba-9f11-4be1-bbfa-6208cb23a14f" />
+
+
+
+## Register Map
+
+| Offset | Name             | Access | Reset | Description                                        |
+| -----: | ---------------- | :----: | :---: | -------------------------------------------------- |
+|   0x00 | REG0             |   R/W  |  0x00 | Controls 7 segmets display on demoboard            |
+|   0x01 | REG1             |   R/W  |  0x00 | General prupose register                           |
+|   0x02 | REG2             |   R/W  |  0x00 | General prupose register                           |
+|   0x03 | REG3             |   R/W  |  0x00 | General prupose register                           |
+|   0x04 | REG4             |   R/W  |  0x00 | General prupose register                           |
+|   0x05 | REG5             |   R/W  |  0x00 | General prupose register                           |
+|   0x06 | REG6             |   R/W  |  0x00 | General prupose register                           |
+|   0x07 | REG7             |   R/W  |  0x00 | General prupose register                           |
+|   0x08 | REG8             |   RO   |  0xC4 | Constant ID Code 1                                 |
+|   0x09 | REG9             |   RO   |  0x10 | Constant ID Code 2                                 |
+|   0x0A | REG10            |   RO   |  0xAA | Constant ID Code 3                                 |
+|   0x0B | REG11            |   RO   |  0x55 | Constant ID Code 4                                 |
+|   0x0C | REG12            |   RO   |  0xFF | Constant ID Code 5                                 |
+|   0x0D | REG13            |   RO   |  0x00 | Constant ID Code 6                                 |
+|   0x0E | REG14            |   RO   |  0xA5 | Constant ID Code 7                                 |
+|   0x0F | REG15            |   RO   |  0x5A | Constant ID Code 8                                 |
+
 
 ## How to test
 
-Use SPI1 Master peripheral in RP2040 to start communication on SPI interface towards this design. Remember to configure the SPI mode using the switches in DIP switch (if you'd like to have CPOL=1 and CPHA=1). Alternatively, don't use the DIP switches and use the RP2040 GPIOs to configure the SPI mode in the desired mode.
+### SPI
+Use SPI1 Master peripheral in RP2040 to start communication on SPI interface towards this design. Remember to configure the SPI mode using digital inputs [0] and [1] to high (if you'd like to have CPOL=1 and CPHA=1).
 
 Example code to initialize SPI in REPL:
 ```txt
@@ -69,13 +148,27 @@ spi_cs(0); spi.write(b'\x00'); spi.read(1); spi_cs(1)
 
 The result should be 0xF8 or whatever you wrote to address[0].
 
-TODO: I2C documentation.
+
+## I2C
+Use I2C Master peripheral in RP2040 to start communication on I2C interface towards this design. Remember to configure the I2C address bits using the digital inputs [2], [3] and [4].
+
+Example code to initialize I2C in REPL:
+```txt
+TO DO
+```
+
+Example code to write 0xF8 to address[0]:
+```txt
+TO DO
+```
+
+Example code to read from address[0]:
+```txt
+TO DO
+```
+
 
 ## External hardware
 
-Not required.
+You may need to use a pull up resistors on the i2c data and i2c scl lines if not possible to configured internally on the RP2040. To be checked at a later point in time.
 Write to the first register to set the LEDs on the demoboard.
-
-## External hardware
-
-None.
