@@ -78,16 +78,17 @@ See that design's docs for information about the I2C peripheral.
 
 ## Protocol specification
 
-### SPI Write
-<img width="2055" height="247" alt="image" src="https://github.com/user-attachments/assets/c2650474-59a1-4d32-8fa9-1cfcd324ecc4" />
+### SPI Write (CPOL = 0, CPHA = 0)
 
-### SPI Read
+![SPI Write](images/spi_write.png)
 
-<img width="2038" height="230" alt="image" src="https://github.com/user-attachments/assets/136d1096-bd1e-441e-a077-004706ebffc6" />
+### SPI Read (CPOL = 0, CPHA = 0)
+
+![SPI Write](images/spi_read.png)
 
 ### I2C Frame
 
-<img width="2452" height="143" alt="image" src="https://github.com/user-attachments/assets/4ad063ba-9f11-4be1-bbfa-6208cb23a14f" />
+![I2C frame](images/i2c_frame.png)
 
 
 
