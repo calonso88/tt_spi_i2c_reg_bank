@@ -104,7 +104,7 @@ See that design's docs for information about the I2C peripheral.
 |   0x05 | REG5             |   R/W  |  0x00 | General prupose register                           |
 |   0x06 | REG6             |   R/W  |  0x00 | General prupose register                           |
 |   0x07 | REG7             |   R/W  |  0x00 | General prupose register                           |
-|   0x08 | REG8             |   RO   |  0xC4 | Constant ID Code 1                                 |
+|   0x08 | REG8             |   RO   |  0xCA | Constant ID Code 1                                 |
 |   0x09 | REG9             |   RO   |  0x10 | Constant ID Code 2                                 |
 |   0x0A | REG10            |   RO   |  0xAA | Constant ID Code 3                                 |
 |   0x0B | REG11            |   RO   |  0x55 | Constant ID Code 4                                 |
@@ -152,24 +152,36 @@ The result should be 0xF8 or whatever you wrote to address[0].
 
 ## I2C
 Use I2C Master peripheral in RP2040 to start communication on I2C interface towards this design. Remember to configure the I2C address bits using the digital inputs [2], [3] and [4].
+Example code below assumes that flex i2c address bits are configured to 0, i.e., configure digital inputs [2], [3] and [4] to 0. Configure digital input [7] to 1 to enable I2C to interface the register bank.
 
 Example code to initialize I2C in REPL:
 ```txt
-TO DO
+i2c_scl = tt.pins.pin_uio2
+i2c_sda = tt.pins.pin_uio1
+i2c = machine.SoftI2C(scl=i2c_scl, sda=i2c_sda, freq=100000)
 ```
 
-Example code to write 0xF8 to address[0]:
+Example code to write one byte value 0xF8 to address[0]. Write to i2c_addr 0x70, starting at memory addr 0, 1 byte (0xF8).
+
 ```txt
-TO DO
+i2c.writeto_mem(112, 0, b'\xF8')
 ```
 
-Example code to read from address[0]:
+Example code to read one byte from address[0]. Read from i2c_addr 0x70, starting at memory addr 0, 1 byte.
 ```txt
-TO DO
+i2c.readfrom_mem(112, 0, 1)
 ```
 
+Example code to write four bytes to address[3-6]. Write to i2c_addr 0x70, starting at memory addr 3, 4 bytes (b'1234').
+```txt
+i2c.writeto_mem(112, 3, b'1234')
+```
+
+Example code to read five bytes from address[9-13]. Read from i2c_addr 0x70, starting at memory addr 9, 5 bytes.
+```txt
+i2c.readfrom_mem(112, 9, 5)
+```
 
 ## External hardware
 
-You may need to use a pull up resistors on the i2c data and i2c scl lines if not possible to configured internally on the RP2040. To be checked at a later point in time.
-Write to the first register to set the LEDs on the demoboard.
+You may need to use external pull up resistors (2k2) on the i2c_sda and i2c_scl lines if the internal pull ups from RP are weak.
