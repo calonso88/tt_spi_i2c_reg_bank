@@ -1,8 +1,13 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
-# Tiny Tapeout Verilog Project Template
+# SPI peripheral and I2C target with register bank
 
 - [Read the documentation for project](docs/info.md)
+
+This repository was generated using a template for submitting to Tiny Tapeout.
+
+
+## Tiny Tapeout Verilog Project Template
 
 ## What is Tiny Tapeout?
 
