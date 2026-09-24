@@ -19,7 +19,7 @@ def spi_clk_invert(value):
   return temp
 
 
-async def spi_write_cpha0 (dut, address, data):
+async def spi_write_cpha0 (dut, address, data, nbits=16):
 
   dut.spi_cs_n_i.value = 1 # PULL CS high, if it wasn't already
   await ClockCycles(dut.clk, 10)
@@ -55,7 +55,7 @@ async def spi_write_cpha0 (dut, address, data):
     await ClockCycles(dut.clk, 10)
     iterator -= 1
 
-  iterator = 7
+  iterator = nbits - 8 - 1
   while iterator >= 0:
     # Data[iterator]
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
@@ -76,7 +76,7 @@ async def spi_write_cpha0 (dut, address, data):
   await ClockCycles(dut.clk, 10)
 
 
-async def spi_read_cpha0 (dut, address):
+async def spi_read_cpha0 (dut, address, nbits=8):
 
   dut.spi_cs_n_i.value = 1 # PULL CS high, if it wasn't already
   await ClockCycles(dut.clk, 10)
@@ -117,7 +117,7 @@ async def spi_read_cpha0 (dut, address):
 
   data = 0
 
-  iterator = 7
+  iterator = nbits - 1
   while iterator >= 0:
     # Data[iterator]
     dut.spi_clk_i.value = spi_clk_invert(dut.spi_clk_i.value)
@@ -244,9 +244,9 @@ async def test_project(dut):
         # Write reg[0] = 0xF0
         await spi_write_cpha0 (dut, 0, data0)
         # Write reg[1]
-        await spi_write_cpha0 (dut, 1, data1)
+        await spi_write_cpha0 (dut, 1, ((data1 << 8) + data2), 24)
         # Write reg[2]
-        await spi_write_cpha0 (dut, 2, data2)
+        #await spi_write_cpha0 (dut, 2, data2)
         # Write reg[3]
         await spi_write_cpha0 (dut, 3, data3)
         # Write reg[4]
@@ -262,6 +262,8 @@ async def test_project(dut):
         reg0 = await spi_read_cpha0 (dut, 0)
         # Read reg[1]
         reg1 = await spi_read_cpha0 (dut, 1)
+        # Read reg[0] and reg[1]
+        reg12 = await spi_read_cpha0 (dut, 1, 16)
         # Read reg[2]
         reg2 = await spi_read_cpha0 (dut, 2)
         # Read reg[3]
@@ -298,6 +300,7 @@ async def test_project(dut):
         assert reg0 == data0
         assert reg1 == data1
         assert reg2 == data2
+        assert reg12 == ((data1 << 8) + data2)
         assert reg3 == data3
         assert reg4 == data4
         assert reg5 == data5
